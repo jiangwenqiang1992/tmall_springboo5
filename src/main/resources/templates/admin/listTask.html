@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="include/admin/adminHeader::html('分类管理')" ></head>
+<body>
+<div ></div>
+<script>
+    $(function(){
+
+        var data4Vue = {
+            uri:'task',
+            beans: [],
+            bean: { id: 0, name: '',lastTime:'',status:0},
+            pagination:{},
+            map:{boolean: {0: '未完成', 1: '警告', 2: '已到期', 3: '已完成'}}
+        };
+
+        //ViewModel
+        var vue = new Vue({
+            el: '#workingArea',
+            data: data4Vue,
+            mounted:function(){ //mounted　表示这个 Vue 对象加载成功了
+                this.list(0);
+                this.update;
+            },
+            methods: {
+                list:function(){
+                    var url =  this.uri;
+                    axios.get(url).then(function(response) {
+                        vue.beans = response.data;
+                    });
+                },
+                update:function(){
+
+                }
+            }
+
+        });
+    });
+
+</script>
+<div id="workingArea" >
+    <h1 class="label label-info" >分类管理</h1>
+    <br>
+    <br>
+    <div >
+        <table class="table table-striped table-bordered table-hover  table-condensed">
+            <thead>
+            <tr class="success">
+                <th>ID</th>
+                <th>任务名</th>
+                <th>最后时间</th>
+                <th>当前状态</th>
+                <th>编辑</th>
+                <th>删除</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="bean in beans ">
+                <td :name="'pvid'+bean.status">{{bean.id}}</td>
+                <td>
+                    {{bean.name}}
+                </td>
+                <td>
+                    {{bean.lastTime}}
+                </td>
+                <td >
+                    {{map.boolean[bean.status]}}
+                </td>
+                <td>
+                    <a :href="'admin_category_edit?id=' + bean.id "><span class="glyphicon glyphicon-edit"></span></a>
+                </td>
+                <td>
+                    <a href="#nowhere"  @click="deleteBean(bean.id)"><span class="   glyphicon glyphicon-trash"></span></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="panel panel-warning addDiv">
+        <div class="panel-heading">新增分类</div>
+        <div class="panel-body">
+            <table class="addTable">
+                <tr>
+                    <td>分类名称</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.name" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td>分类图片</td>
+                    <td>
+
+                    </td>
+                </tr>
+                <tr class="submitTR">
+                    <td colspan="2" align="center">
+                        <a href="#nowhere"  @click="list" class="btn btn-success">提交</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    var trs = document.getElementsByTagName("td");
+    console.log(trs.length);
+    for(i=0;i<trs.length;i++){
+        console.log(trs[i].innerText);
+        if (trs[i].innerText == "未完成"){
+
+            trs[i].style.backgroundColor='#ff00ff';
+        }
+    }
+</script>
+
+</body>
+</html>
